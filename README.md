@@ -23,7 +23,7 @@ curl https://blooming-reef-75437.herokuapp.com/info/geanfelipe/hello-microservic
 [https://blooming-reef-75437.herokuapp.com/swagger-ui.html](https://blooming-reef-75437.herokuapp.com/swagger-ui.html)
 
 
-## Get docker image 
+## Get docker image from docker hub
 ```
 docker pull geanfelipemoura/github-scraping:0.1.0
 ```
