@@ -18,7 +18,7 @@ public class GithubExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(HttpClientErrorException.class)
 	private ResponseEntity<ErrorResponseDto> handleNotFoundException(final HttpClientErrorException exception) {
-		final ErrorResponseDto errorResponse = new ErrorResponseDto(404, exception.getMessage());
+		final ErrorResponseDto errorResponse = new ErrorResponseDto(404, "Page Not Found");
 		return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
 	}
 }
