@@ -16,7 +16,7 @@ e.g:
 
 
 ```
-curl https://blooming-reef-75437.herokuapp.com/info/geanfelipe/hello-microservice-message
+curl https://blooming-reef-75437.herokuapp.com/info/{owner}/{repository}
 ```
  
 ## Swagger 
@@ -36,6 +36,9 @@ $ docker run -p 8080:8080 -e PORT=8080 -t geanfelipemoura/github-scraping:0.1.0
 
 after that , you will be able to test locally
 
+e.g
+
+get informations from user geanfelipe's hello-microservice-message repository
 ```
 curl http://localhost:8080/info/geanfelipe/hello-microservice-message
 ```
