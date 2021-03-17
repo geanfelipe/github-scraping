@@ -12,8 +12,6 @@ This project returns the total number of lines and the total number of bytes of 
 ## Resource url
 [https://blooming-reef-75437.herokuapp.com](https://blooming-reef-75437.herokuapp.com). 
 
-e.g:
-
 
 ```
 curl https://blooming-reef-75437.herokuapp.com/info/{owner}/{repository}
@@ -36,9 +34,12 @@ $ docker run -p 8080:8080 -e PORT=8080 -t geanfelipemoura/github-scraping:0.1.0
 
 after that , you will be able to test locally
 
-e.g
+
+e.g:
+
 
 get informations from user geanfelipe's hello-microservice-message repository
+
 ```
 curl http://localhost:8080/info/geanfelipe/hello-microservice-message
 ```
