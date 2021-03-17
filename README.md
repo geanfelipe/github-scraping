@@ -9,5 +9,22 @@ This project returns the total number of lines and the total number of bytes of 
 5. Docker
 
 
-## swagger http://localhost:8080/swagger-ui.html
+## Resource url
+[https://blooming-reef-75437.herokuapp.com](https://blooming-reef-75437.herokuapp.com). 
+
+e.g:
+
+
+```
+curl https://blooming-reef-75437.herokuapp.com/info/geanfelipe/hello-microservice-message
+```
+ 
+## Swagger 
+[https://blooming-reef-75437.herokuapp.com/swagger-ui.html](https://blooming-reef-75437.herokuapp.com/swagger-ui.html)
+
+
+## Get docker image 
+```
+docker pull geanfelipemoura/github-scraping:0.1.0
+```
 
