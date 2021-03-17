@@ -28,3 +28,14 @@ curl https://blooming-reef-75437.herokuapp.com/info/geanfelipe/hello-microservic
 docker pull geanfelipemoura/github-scraping:0.1.0
 ```
 
+## Execute 
+```
+$ docker run -p 8080:8080 -e PORT=8080 -t geanfelipemoura/github-scraping:0.1.0
+```
+
+
+after that , you will be able to test locally
+
+```
+curl http://localhost:8080/info/geanfelipe/hello-microservice-message
+```
