@@ -3,7 +3,6 @@ package com.challenge.me.handler;
 
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,7 +17,9 @@ public class GithubExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(HttpClientErrorException.class)
 	private ResponseEntity<ErrorResponseDto> handleNotFoundException(final HttpClientErrorException exception) {
-		final ErrorResponseDto errorResponse = new ErrorResponseDto(404, "Page Not Found");
-		return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+		exception.printStackTrace();
+		final ErrorResponseDto errorResponse =
+				new ErrorResponseDto(exception.getStatusCode().value(), exception.getLocalizedMessage());
+		return new ResponseEntity<>(errorResponse, exception.getStatusCode());
 	}
 }
