@@ -1,52 +1,40 @@
 
 package com.challenge.me.controller;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.HashMap;
 import java.util.Map;
 
+import org.assertj.core.api.BDDAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
-import org.mockito.Mockito;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.TestPropertySource;
 
-import com.challenge.me.business.GithubRepositoryFilesInformationBusiness;
-import com.challenge.me.dto.ErrorResponseDto;
 import com.challenge.me.dto.GithubRepositoryFilesInformationDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@ExtendWith(SpringExtension.class)
-@WebMvcTest(controllers = GithubRepositoryFilesInformationController.class)
-@AutoConfigureMockMvc
-@ActiveProfiles(profiles = "test")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestPropertySource(properties = { "management.port=0" })
 public class GithubRepositoryFilesInformationControllerTest {
 
+	@LocalServerPort
+	private int port;
+
+	@Value("${local.management.port}")
+	private int mgt;
+
 	@Autowired
-	private MockMvc mockMvc;
+	private TestRestTemplate testRestTemplate;
 
 	@Autowired
 	private ObjectMapper objectMapper;
-
-	@MockBean
-	private GithubRepositoryFilesInformationBusiness githubRepositoryFilesInformationBusiness;
-
-	@Test
-	void contextLoads() {}
 
 	@BeforeEach
 	public void beforeEach() {
@@ -55,46 +43,45 @@ public class GithubRepositoryFilesInformationControllerTest {
 
 	@Test
 	public void whenValidRepositoryThenStatus200AndInformations() throws Exception {
-		Mockito.when(githubRepositoryFilesInformationBusiness
-				.getInformationsFor(ArgumentMatchers.nullable(String.class), ArgumentMatchers.nullable(String.class)))
-				.thenReturn(getMockRepositoryFilesInformation());
+		final ResponseEntity<GithubRepositoryFilesInformationDto> entity =
+				testRestTemplate.getForEntity("http://localhost:" + mgt + "/info/geanfelipe/hello-microservice-message",
+						GithubRepositoryFilesInformationDto.class);
 
-		final MvcResult mvcResult = mockMvc.perform(
-				MockMvcRequestBuilders.get("/info/{owner}/{repository}", "geanfelipe", "hello-microservice-message")
-						.contentType(MediaType.APPLICATION_JSON))
-				.andReturn();
-
-		final String actualResponseBody = mvcResult.getResponse().getContentAsString();
+		BDDAssertions.then(entity.getStatusCode()).isEqualTo(HttpStatus.OK);
+		final String actualResponseBody = objectMapper.writeValueAsString(entity.getBody());
 		final String expectedResponseBody = objectMapper.writeValueAsString(getMockRepositoryFilesInformation());
-
-		assertThat(actualResponseBody).isEqualToIgnoringWhitespace(expectedResponseBody);
+		JSONAssert.assertEquals(actualResponseBody, expectedResponseBody, false);
 	}
 
 	@Test
-	public void whenInvalidRepositoryThenReturns404() throws Exception {
+	public void whenRepositoryDoestNotExistsThenStatus404() throws Exception {
+		final ResponseEntity<GithubRepositoryFilesInformationDto> entity = testRestTemplate.getForEntity(
+				"http://localhost:" + mgt + "/info/geanfelipe/hello-microservice-messageSSSSS",
+				GithubRepositoryFilesInformationDto.class);
 
-		Mockito.when(githubRepositoryFilesInformationBusiness
-				.getInformationsFor(ArgumentMatchers.nullable(String.class), ArgumentMatchers.nullable(String.class)))
-				.thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND, "Not found"));
-
-		final MvcResult mvcResult = mockMvc
-				.perform(MockMvcRequestBuilders
-						.get("/info/{owner}/{repository}", "geanfelipe", "hello-microservice-messages")
-						.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(MockMvcResultMatchers.status().isNotFound())
-				.andReturn();
-
-		final String actualResponseBody = mvcResult.getResponse().getContentAsString();
-		final String expectedResponseBody =
-				objectMapper.writeValueAsString(new ErrorResponseDto(404, "Page Not Found"));
-		assertThat(actualResponseBody).isEqualToIgnoringWhitespace(expectedResponseBody);
+		BDDAssertions.then(entity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 	}
 
 	private GithubRepositoryFilesInformationDto getMockRepositoryFilesInformation() {
 		final Map<String, Integer> totalNumberOfLines = new HashMap<>();
 		final Map<String, Double> totalNumberOfBytes = new HashMap<>();
 		totalNumberOfLines.put("java", 38);
-		totalNumberOfBytes.put("java", 1259.52d);
+		totalNumberOfLines.put("classpath", 31);
+		totalNumberOfLines.put("gitignore", 1);
+		totalNumberOfLines.put("xml", 62);
+		totalNumberOfLines.put("md", 18);
+		totalNumberOfLines.put("png", 0);
+		totalNumberOfLines.put("project", 23);
+		totalNumberOfLines.put("prefs", 14);
+
+		totalNumberOfBytes.put("java", 1259.52);
+		totalNumberOfBytes.put("classpath", 1198.08);
+		totalNumberOfBytes.put("gitignore", 9.0);
+		totalNumberOfBytes.put("xml", 2058.24);
+		totalNumberOfBytes.put("md", 705.0);
+		totalNumberOfBytes.put("png", 61849.6);
+		totalNumberOfBytes.put("project", 555.0);
+		totalNumberOfBytes.put("prefs", 474.0);
 		return new GithubRepositoryFilesInformationDto(totalNumberOfLines, totalNumberOfBytes);
 	}
 
