@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -27,9 +26,6 @@ public class GithubRepositoryFilesInformationControllerTest {
 	@LocalServerPort
 	private int port;
 
-	@Value("${local.management.port}")
-	private int mgt;
-
 	@Autowired
 	private TestRestTemplate testRestTemplate;
 
@@ -43,9 +39,9 @@ public class GithubRepositoryFilesInformationControllerTest {
 
 	@Test
 	public void whenValidRepositoryThenStatus200AndInformations() throws Exception {
-		final ResponseEntity<GithubRepositoryFilesInformationDto> entity =
-				testRestTemplate.getForEntity("http://localhost:" + mgt + "/info/geanfelipe/hello-microservice-message",
-						GithubRepositoryFilesInformationDto.class);
+		final ResponseEntity<GithubRepositoryFilesInformationDto> entity = testRestTemplate.getForEntity(
+				"http://localhost:" + port + "/info/geanfelipe/hello-microservice-message",
+				GithubRepositoryFilesInformationDto.class);
 
 		BDDAssertions.then(entity.getStatusCode()).isEqualTo(HttpStatus.OK);
 		final String actualResponseBody = objectMapper.writeValueAsString(entity.getBody());
@@ -56,7 +52,7 @@ public class GithubRepositoryFilesInformationControllerTest {
 	@Test
 	public void whenRepositoryDoestNotExistsThenStatus404() throws Exception {
 		final ResponseEntity<GithubRepositoryFilesInformationDto> entity = testRestTemplate.getForEntity(
-				"http://localhost:" + mgt + "/info/geanfelipe/hello-microservice-messageSSSSS",
+				"http://localhost:" + port + "/info/geanfelipe/hello-microservice-messageSSSSS",
 				GithubRepositoryFilesInformationDto.class);
 
 		BDDAssertions.then(entity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
