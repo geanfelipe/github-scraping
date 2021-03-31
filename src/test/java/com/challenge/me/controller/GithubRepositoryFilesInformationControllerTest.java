@@ -45,6 +45,9 @@ public class GithubRepositoryFilesInformationControllerTest {
 	@MockBean
 	private GithubRepositoryFilesInformationBusiness githubRepositoryFilesInformationBusiness;
 
+	@Test
+	void contextLoads() {}
+
 	@BeforeEach
 	public void beforeEach() {
 
@@ -56,11 +59,9 @@ public class GithubRepositoryFilesInformationControllerTest {
 				.getInformationsFor(ArgumentMatchers.nullable(String.class), ArgumentMatchers.nullable(String.class)))
 				.thenReturn(getMockRepositoryFilesInformation());
 
-		final MvcResult mvcResult = mockMvc
-				.perform(MockMvcRequestBuilders
-						.get("/info/{owner}/{repository}", "geanfelipe", "hello-microservice-message")
+		final MvcResult mvcResult = mockMvc.perform(
+				MockMvcRequestBuilders.get("/info/{owner}/{repository}", "geanfelipe", "hello-microservice-message")
 						.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andReturn();
 
 		final String actualResponseBody = mvcResult.getResponse().getContentAsString();

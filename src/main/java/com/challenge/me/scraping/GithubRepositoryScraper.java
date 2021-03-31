@@ -64,7 +64,7 @@ public class GithubRepositoryScraper {
 			totalNumberOfLines.merge(fileExtension, numberOfLines, Integer::sum);
 			totalNumberOfBytes.merge(fileExtension, fileSize, Double::sum);
 		} else {
-			fileUrls.stream().forEach(this::runPrinciple);
+			fileUrls.parallelStream().forEach(this::runPrinciple);
 		}
 	}
 
